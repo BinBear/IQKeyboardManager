@@ -1889,7 +1889,7 @@ NS_EXTENSION_UNAVAILABLE_IOS("Unavailable in extension")
         if (isResignFirstResponder == NO)
         {
             //If it refuses to resign then becoming it first responder again for getting notifications callback.
-            [textFieldRetain becomeFirstResponder];
+//            [textFieldRetain becomeFirstResponder];
             
             [self showLog:[NSString stringWithFormat:@"Refuses to Resign first responder: %@",textFieldView]];
         }
