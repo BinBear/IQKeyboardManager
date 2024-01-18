@@ -1,5 +1,5 @@
 //
-//  StackViewController.swift
+//  TextFieldHostingViewController.swift
 //  https://github.com/hackiftekhar/IQKeyboardManager
 //  Copyright (c) 2013-24 Iftekhar Qurashi.
 //
@@ -22,6 +22,12 @@
 // THE SOFTWARE.
 
 import UIKit
+import SwiftUI
 
-class StackViewController: BaseViewController {
+@available(iOS 15.0, *)
+class TextFieldHostingViewController: UIHostingController<TextFieldView> {
+
+    required init?(coder: NSCoder) {
+         super.init(coder: coder, rootView: TextFieldView())
+     }
 }

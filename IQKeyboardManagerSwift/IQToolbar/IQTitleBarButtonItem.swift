@@ -40,7 +40,7 @@ import UIKit
 
     @objc override open var title: String? {
         didSet {
-                titleButton?.setTitle(title, for: .normal)
+            titleButton?.setTitle(title, for: .normal)
         }
     }
 
@@ -93,6 +93,7 @@ import UIKit
         _titleView?.backgroundColor = UIColor.clear
 
         titleButton = UIButton(type: .system)
+        titleButton?.accessibilityTraits = .staticText
         titleButton?.isEnabled = false
         titleButton?.titleLabel?.numberOfLines = 3
         titleButton?.setTitleColor(UIColor.lightGray, for: .disabled)

@@ -36,32 +36,55 @@ internal extension IQKeyboardManager {
         var superConsideredView: UIView?
 
         // If find any consider responderView in it's upper hierarchy then will get deepResponderView.
-        for disabledClass in toolbarPreviousNextAllowedClasses {
-            superConsideredView = textFieldView.iq.superviewOf(type: disabledClass)
+        for allowedClass in toolbarPreviousNextAllowedClasses {
+            superConsideredView = textFieldView.iq.superviewOf(type: allowedClass)
             if superConsideredView != nil {
                 break
             }
+        }
+
+        var swiftUIHostingView: UIView?
+        let swiftUIHostingViewName: String = "UIHostingView<"
+        var superView: UIView? = textFieldView.superview
+        while let unwrappedSuperView: UIView = superView {
+
+            let classNameString: String = {
+                var name: String = "\(type(of: unwrappedSuperView.self))"
+                if name.hasPrefix("_") {
+                    name.removeFirst()
+                }
+                return name
+            }()
+
+            if classNameString.hasPrefix(swiftUIHostingViewName) {
+                swiftUIHostingView = unwrappedSuperView
+                break
+            }
+
+            superView = unwrappedSuperView.superview
         }
 
         // (Enhancement ID: #22)
         // If there is a superConsideredView in view's hierarchy,
         // then fetching all it's subview that responds.
         // No sorting for superConsideredView, it's by subView position.
-        if let view: UIView = superConsideredView {
+        if let view: UIView = swiftUIHostingView {
+            return view.iq.deepResponderViews()
+        } else if let view: UIView = superConsideredView {
             return view.iq.deepResponderViews()
         } else {  // Otherwise fetching all the siblings
 
             let textFields: [UIView] = textFieldView.iq.responderSiblings()
 
-            // Sorting textFields according to behaviour
-            switch toolbarConfiguration.manageBehaviour {
-            // If autoToolbar behaviour is bySubviews, then returning it.
+            // Sorting textFields according to behavior
+            switch toolbarConfiguration.manageBehavior {
+            // If autoToolbar behavior is bySubviews, then returning it.
             case .bySubviews:   return textFields
 
-            // If autoToolbar behaviour is by tag, then sorting it according to tag property.
+            // If autoToolbar behavior is by tag, then sorting it according to tag property.
             case .byTag:    return textFields.sortedByTag()
 
-            // If autoToolbar behaviour is by tag, then sorting it according to tag property.
+            // If autoToolbar behavior is by tag, then sorting it according to tag property.
             case .byPosition:    return textFields.sortedByPosition()
             }
         }

@@ -48,17 +48,31 @@ public extension IQKeyboardManager {
         // (There is Previous/Next/Done toolbar)
         guard let siblings: [UIView] = responderViews(), !siblings.isEmpty,
               let textField: UIView = activeConfiguration.textFieldViewInfo?.textFieldView,
-              textField.responds(to: #selector(setter: UITextField.inputAccessoryView)),
-              textField.inputAccessoryView == nil ||
-                textField.inputAccessoryView?.tag == IQKeyboardManager.kIQPreviousNextButtonToolbarTag ||
-                textField.inputAccessoryView?.tag == IQKeyboardManager.kIQDoneButtonToolbarTag else {
+              textField.responds(to: #selector(setter: UITextField.inputAccessoryView)) else {
             return
         }
 
-//        let startTime: CFTimeInterval = CACurrentMediaTime()
-//        showLog(">>>>> \(#function) started >>>>>", indentation: 1)
+        if let inputAccessoryView: UIView = textField.inputAccessoryView {
 
-//        showLog("Found \(siblings.count) responder sibling(s)")
+            if inputAccessoryView.tag == IQKeyboardManager.kIQPreviousNextButtonToolbarTag ||
+                inputAccessoryView.tag == IQKeyboardManager.kIQDoneButtonToolbarTag {
+                // continue
+            } else {
+                let swiftUIAccessoryName: String = "InputAccessoryHost<InputAccessoryBar>"
+                let classNameString: String = "\(type(of: inputAccessoryView.classForCoder))"
+
+                // If it's SwiftUI accessory view but doesn't have a height (fake accessory view), then we should
+                // add our own accessoryView otherwise, keep the SwiftUI accessoryView since user has added it from code
+                guard classNameString.hasPrefix(swiftUIAccessoryName), inputAccessoryView.subviews.isEmpty else {
+                    return
+                }
+            }
+        }
+
+        showLog(">>>>> \(#function) started >>>>>", indentation: 1)
+        let startTime: CFTimeInterval = CACurrentMediaTime()
+
+        showLog("Found \(siblings.count) responder sibling(s)")
 
         let rightConfiguration: IQBarButtonItemConfiguration
         if let configuration: IQBarButtonItemConfiguration = toolbarConfiguration.doneBarButtonConfiguration {
@@ -138,7 +152,7 @@ public extension IQKeyboardManager {
             } else {
                 // If firstTextField, then previous should not be enabled.
                 textField.iq.toolbar.previousBarButton.isEnabled = (siblings.first != textField)
-                // If lastTextField then next should not be enaled.
+                // If lastTextField then next should not be enabled.
                 textField.iq.toolbar.nextBarButton.isEnabled = (siblings.last != textField)
             }
 
@@ -199,16 +213,16 @@ public extension IQKeyboardManager {
             toolbar.titleBarButton.title = nil
         }
 
-        // In case of UITableView (Special), the next/previous buttons has to be refreshed everytime.    (Bug ID: #56)
+        // In case of UITableView (Special), the next/previous buttons has to be refreshed every-time.    (Bug ID: #56)
 
         // If firstTextField, then previous should not be enabled.
         textField.iq.toolbar.previousBarButton.isEnabled = (siblings.first != textField)
 
-        // If lastTextField then next should not be enaled.
+        // If lastTextField then next should not be enabled.
         textField.iq.toolbar.nextBarButton.isEnabled = (siblings.last != textField)
 
-//        let elapsedTime: CFTimeInterval = CACurrentMediaTime() - startTime
-//        showLog("<<<<< \(#function) ended: \(elapsedTime) seconds <<<<<", indentation: -1)
+        let elapsedTime: CFTimeInterval = CACurrentMediaTime() - startTime
+        showLog("<<<<< \(#function) ended: \(elapsedTime) seconds <<<<<", indentation: -1)
     }
     // swiftlint:enable function_body_length
     // swiftlint:enable cyclomatic_complexity
@@ -225,9 +239,10 @@ public extension IQKeyboardManager {
             return
         }
 
-//        let startTime: CFTimeInterval = CACurrentMediaTime()
-//        showLog(">>>>> \(#function) started >>>>>", indentation: 1)
-//        showLog("Found \(siblings.count) responder sibling(s)")
+        showLog(">>>>> \(#function) started >>>>>", indentation: 1)
+        let startTime: CFTimeInterval = CACurrentMediaTime()
+
+        showLog("Found \(siblings.count) responder sibling(s)")
 
         for view in siblings {
             if let toolbar: IQToolbar = view.inputAccessoryView as? IQToolbar {
@@ -248,8 +263,8 @@ public extension IQKeyboardManager {
             }
         }
 
-//        let elapsedTime: CFTimeInterval = CACurrentMediaTime() - startTime
-//        showLog("<<<<< \(#function) ended: \(elapsedTime) seconds <<<<<", indentation: -1)
+        let elapsedTime: CFTimeInterval = CACurrentMediaTime() - startTime
+        showLog("<<<<< \(#function) ended: \(elapsedTime) seconds <<<<<", indentation: -1)
     }
 
     /**    reloadInputViews to reload toolbar buttons enable/disable state on the fly Enhancement ID #434. */
