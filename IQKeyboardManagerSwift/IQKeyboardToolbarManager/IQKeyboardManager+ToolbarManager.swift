@@ -22,11 +22,12 @@
 //  THE SOFTWARE.
 
 import UIKit
+import IQKeyboardToolbarManager
 
 @available(iOSApplicationExtension, unavailable)
 // swiftlint:disable line_length
 @available(*, deprecated,
-            message: "Please disable Toolbar using `IQKeyboardManager.shared.enableAutoToolbar = false` and use `IQKeyboardToolbarManager` independently from https://github.com/hackiftekhar/IQKeyboardToolbarManager")
+            message: "Please use `IQKeyboardToolbarManager` independently from https://github.com/hackiftekhar/IQKeyboardToolbarManager")
 // swiftlint:enable line_length
 @MainActor
 @objc public extension IQKeyboardManager {
@@ -37,35 +38,26 @@ import UIKit
     }
 
     internal var toolbarManager: IQKeyboardToolbarManager {
-        if let object = objc_getAssociatedObject(self, &AssociatedKeys.toolbarManager)
-            as? IQKeyboardToolbarManager {
-            return object
-        }
-
-        let object: IQKeyboardToolbarManager = .init()
-        objc_setAssociatedObject(self, &AssociatedKeys.toolbarManager,
-                                 object, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-
-        return object
+        IQKeyboardToolbarManager.shared
     }
 
     var enableToolbarDebugging: Bool {
-        get { toolbarManager.enableDebugging }
-        set { toolbarManager.enableDebugging = newValue }
+        get { toolbarManager.isDebuggingEnabled }
+        set { toolbarManager.isDebuggingEnabled = newValue }
     }
 
     /**
      Automatic add the toolbar functionality. Default is YES.
      */
     var enableAutoToolbar: Bool {
-        get { toolbarManager.enable }
-        set { toolbarManager.enable = newValue }
+        get { toolbarManager.isEnabled }
+        set { toolbarManager.isEnabled = newValue }
     }
 
     /**
      Configurations related to the toolbar display over the keyboard.
      */
-    var toolbarConfiguration: IQToolbarConfiguration {
+    var toolbarConfiguration: IQKeyboardToolbarConfiguration {
         toolbarManager.toolbarConfiguration
     }
 

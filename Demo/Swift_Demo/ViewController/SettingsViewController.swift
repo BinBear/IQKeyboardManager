@@ -23,6 +23,8 @@
 
 import UIKit
 import IQKeyboardManagerSwift
+import IQKeyboardToolbar
+import IQKeyboardToolbarManager
 
 class SettingsViewController: UITableViewController {
 
@@ -80,7 +82,7 @@ class SettingsViewController: UITableViewController {
     /**  UIKeyboard Handling    */
     @objc func enableAction (_ sender: UISwitch) {
 
-        IQKeyboardManager.shared.enable = sender.isOn
+        IQKeyboardManager.shared.isEnabled = sender.isOn
 
         self.tableView.reloadSections(IndexSet(integer: 0), with: .fade)
     }
@@ -154,7 +156,7 @@ class SettingsViewController: UITableViewController {
     /**  Debugging         */
     @objc func enableDebugging (_ sender: UISwitch) {
 
-        IQKeyboardManager.shared.enableDebugging = sender.isOn
+        IQKeyboardManager.shared.isDebuggingEnabled = sender.isOn
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -280,7 +282,7 @@ extension SettingsViewController: OptionsViewControllerDelegate {
             }
 
             if selectedIndexPath.section == 1 && selectedIndexPath.row == 1 {
-                let value = IQAutoToolbarManageBehavior(rawValue: index)!
+                let value = IQKeyboardToolbarManageBehavior(rawValue: index)!
                 IQKeyboardManager.shared.toolbarConfiguration.manageBehavior = value
             } else if selectedIndexPath.section == 1 && selectedIndexPath.row == 4 {
 
